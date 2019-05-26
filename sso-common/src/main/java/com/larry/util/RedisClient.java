@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Redis客户端
@@ -42,9 +43,24 @@ public class RedisClient {
      * @param value
      * @return
      */
-    public static boolean set(String key, Object value) {
+    public static boolean set(String key, String value) {
         try {
             redisClient.redisTemplate.opsForValue().set(key, value);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public static boolean setex(String key, String value, long time) {
+        try {
+            if (time > 0) {
+                redisClient.redisTemplate.opsForValue().set(key, value, time, TimeUnit.SECONDS);
+            } else {
+                set(key, value);
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
