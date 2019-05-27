@@ -26,10 +26,6 @@ import static java.util.Optional.of;
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
-    @Value("${user.token.expire.second}")
-    private long expireSecond;
-
-
     private static List<User> USERS = Arrays.asList(
             new User("tonny", "tonny", 1000, UserStatusEnums.ACTIVE.getStatus()),
             new User("sarah", "sarah", 1001, UserStatusEnums.ACTIVE.getStatus()),
@@ -38,7 +34,7 @@ public class UserServiceImpl implements UserService {
     );
 
     @Override
-    public void verify(String username, String password, Integer systemId) {
+    public AuthInfo verify(String username, String password, Integer systemId) {
 
         User user = USERS.stream()
                 .filter(u -> Objects.equals(u.getUsername(), username))
@@ -51,13 +47,11 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(ServiceExceptionEnums.USER_BANNED::getException);
 
         String token = UUID.randomUUID().toString().replace("-", "");
-        long current = System.currentTimeMillis();
-        AuthInfo authInfo = AuthInfo.builder().expiredTime(current + expireSecond * 1000)
-                .loginTime(current)
+        AuthInfo authInfo = AuthInfo.builder()
                 .token(token)
                 .userInfo(new UserInfo(user.getUsername(), ""))
                 .lastSystemId(systemId)
                 .build();
-        RedisClient.setex(RedisKeys.AUTH_TOKEN_SUFFIX + token, JsonUtils.toJson(authInfo), expireSecond);
+        return authInfo;
     }
 }

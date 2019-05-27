@@ -16,6 +16,8 @@ public class RedisClient {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+
+
     private void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -61,6 +63,16 @@ public class RedisClient {
             } else {
                 set(key, value);
             }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean del(String key) {
+        try {
+            redisClient.redisTemplate.delete(key);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

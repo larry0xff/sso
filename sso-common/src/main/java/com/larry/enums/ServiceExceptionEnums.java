@@ -14,7 +14,7 @@ public enum ServiceExceptionEnums {
 
     PASSWORD_INCORRECT(new ServiceException("10000", "用户名或密码错误")),
     USER_NOT_EXIST(new ServiceException("10001", "用户不存在")),
-    USER_BANNED(new ServiceException("10002", "用户已被禁用"));
-
+    USER_BANNED(new ServiceException("10002", "用户已被禁用")),
+    LOGIN_TIMEOUT(new ServiceException("10003","登录信息超时"));
     private ServiceException exception;
 }
