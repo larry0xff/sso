@@ -27,7 +27,7 @@ import static java.util.Optional.of;
 public class UserServiceImpl implements UserService {
 
     private static List<User> USERS = Arrays.asList(
-            new User("tonny", "tonny", 1000, UserStatusEnums.ACTIVE.getStatus()),
+            new User("tony", "tony", 1000, UserStatusEnums.ACTIVE.getStatus()),
             new User("sarah", "sarah", 1001, UserStatusEnums.ACTIVE.getStatus()),
             new User("jerry", "jerry", 1002, UserStatusEnums.ACTIVE.getStatus()),
             new User("hok", "hok", 1003, UserStatusEnums.BANNED.getStatus())
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         of(user).filter(u -> Objects.equals(u.getStatus(), UserStatusEnums.ACTIVE.getStatus()))
                 .orElseThrow(ServiceExceptionEnums.USER_BANNED::getException);
 
-        String token = UUID.randomUUID().toString().replace("-", "");
+        String token = "tk" + username;
         AuthInfo authInfo = AuthInfo.builder()
                 .token(token)
                 .userInfo(new UserInfo(user.getUsername(), ""))

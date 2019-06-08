@@ -20,7 +20,7 @@ import static java.util.Optional.ofNullable;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Value("${user.token.expire.second}")
+    @Value("${auth.token.expire.second:1800}")
     private long expireSecond;
 
     @Autowired
@@ -48,10 +48,10 @@ public class AuthController {
     @PostMapping("/login")
     public Result<AuthInfo> login(@RequestBody LoginParam param) {
         AuthInfo authInfo = userService.verify(param.getUsername(), param.getPassword(), param.getSystemId());
-        RedisClient.setex(RedisKeys.AUTH_TOKEN_SUFFIX + authInfo.getToken(), JsonUtils.toJson(authInfo), expireSecond);
         long current = System.currentTimeMillis();
         authInfo.setExpiredTime(current + expireSecond * 1000);
         authInfo.setLoginTime(current);
+        RedisClient.setex(RedisKeys.AUTH_TOKEN_SUFFIX + authInfo.getToken(), JsonUtils.toJson(authInfo), expireSecond);
         return Result.success(authInfo);
     }
 
@@ -70,7 +70,7 @@ public class AuthController {
      * @param token
      * @return
      */
-    @PostMapping("/renewal/{token}}")
+    @PostMapping("/renewal/{token}")
     public Result<Long> renewal(@PathVariable("token") String token) {
         long current = System.currentTimeMillis();
         String key = RedisKeys.AUTH_TOKEN_SUFFIX + token;
